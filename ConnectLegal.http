@@ -1,0 +1,6 @@
+@ConnectLegal_HostAddress = http://localhost:5157
+
+GET {{ConnectLegal_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
