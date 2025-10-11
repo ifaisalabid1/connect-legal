@@ -25,8 +25,8 @@ public class LawyerDto
 
     [Range(0, 100, ErrorMessage = "Year of Experience must be between 0 and 100.")]
     public int YearOfExperience { get; set; } = 0;
-    public Guid LawFirmId { get; set; }
-    public LawFirmDto LawFirm { get; set; } = null!;
+    public Guid? LawFirmId { get; set; }
+    public LawFirmDto? LawFirm { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime? UpdatedAt { get; set; }
 }
@@ -48,6 +48,8 @@ public class CreateLawyerDto
     [Required(ErrorMessage = "Email is required."), EmailAddress(ErrorMessage = "Email address is invalid."), MaxLength(255, ErrorMessage = "Name must not be more than 255 characters long.")]
     public string Email { get; set; } = string.Empty;
     public bool IsFeatured { get; set; } = false;
+
+    public Guid LawFirmId { get; set; }
 
     [Range(0, 100, ErrorMessage = "Year of Experience must be between 0 and 100.")]
     public int YearOfExperience { get; set; } = 0;

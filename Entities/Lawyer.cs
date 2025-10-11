@@ -9,6 +9,6 @@ public class Lawyer : BaseEntity
     public string Email { get; set; } = string.Empty;
     public string IsFeatured { get; set; } = string.Empty;
     public int YearOfExperience { get; set; } = 0;
-    public Guid LawFirmId { get; set; }
-    public virtual LawFirm LawFirm { get; set; } = null!;
+    public Guid? LawFirmId { get; set; }
+    public virtual LawFirm? LawFirm { get; set; } = null!;
 }

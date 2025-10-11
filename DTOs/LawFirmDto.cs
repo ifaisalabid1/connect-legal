@@ -22,6 +22,7 @@ public class LawFirmDto
     [Required(ErrorMessage = "Email is required."), EmailAddress(ErrorMessage = "Email address is invalid."), MaxLength(255, ErrorMessage = "Name must not be more than 255 characters long.")]
     public string Email { get; set; } = string.Empty;
     public bool IsFeatured { get; set; } = false;
+    public List<LawyerDto> Lawyers { get; set; } = [];
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime? UpdatedAt { get; set; }
 }
