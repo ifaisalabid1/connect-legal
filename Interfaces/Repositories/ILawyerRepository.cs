@@ -4,6 +4,6 @@ namespace ConnectLegal.Interfaces.Repositories;
 
 public interface ILawyerRepository : IBaseRepository<Lawyer>
 {
-    Task<Lawyer?> GetByEmailAsync(string email);
-    Task<IEnumerable<Lawyer>?> GetFeaturedAsync();
+    Task<Lawyer?> GetByEmailAsync(string email, CancellationToken cancellationToken);
+    Task<IEnumerable<Lawyer>?> GetFeaturedAsync(CancellationToken cancellationToken);
 }

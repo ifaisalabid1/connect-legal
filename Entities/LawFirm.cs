@@ -7,6 +7,6 @@ public class LawFirm : BaseEntity
     public string? Website { get; set; }
     public string? Phone { get; set; }
     public string Email { get; set; } = string.Empty;
-    public string IsFeatured { get; set; } = string.Empty;
+    public bool IsFeatured { get; set; } = false;
     public virtual ICollection<Lawyer> Lawyers { get; set; } = [];
 }
