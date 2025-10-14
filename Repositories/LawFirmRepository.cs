@@ -1,29 +1,24 @@
 using ConnectLegal.Data;
 using ConnectLegal.Entities;
-using ConnectLegal.Interfaces.Repositories;
+using ConnectLegal.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConnectLegal.Repositories;
 
-public class LawFirmRepository(AppDbContext context) : BaseRepository<LawFirm>(context), ILawFirmRepository
+public class LawFirmRepository(AppDbContext context) : Repository<LawFirm>(context), ILawFirmRepository
 {
-    public async Task<LawFirm?> GetByEmailAsync(string email, CancellationToken cancellationToken)
+    public async Task<LawFirm?> GetByEmailAsync(string email)
     {
-        if (string.IsNullOrWhiteSpace(email))
-            return null;
-
-        return await _context.LawFirms
-            .AsNoTracking()
-            .FirstOrDefaultAsync(f => f.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase), cancellationToken);
+        return await _context.LawFirms.FirstOrDefaultAsync(f => f.Email == email);
     }
 
-    public async Task<IEnumerable<LawFirm>?> GetFeaturedAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<LawFirm>?> GetFeaturedAsync()
     {
-        return await _context.LawFirms
-            .AsNoTracking()
-            .Where(f => f.IsFeatured)
-            .OrderByDescending(f => f.CreatedAt)
-            .Take(10)
-            .ToListAsync(cancellationToken);
+        return await _context.LawFirms.Where(f => f.IsFeatured).ToListAsync();
+    }
+
+    public async Task<bool> LawFirmExistsAsync(Guid id)
+    {
+        return await _context.LawFirms.AnyAsync(f => f.Id == id);
     }
 }
