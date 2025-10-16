@@ -24,5 +24,5 @@ public class LawFirm : BaseEntity
     [EmailAddress(ErrorMessage = "Email address is invalid.")]
     public required string Email { get; set; }
     public bool IsFeatured { get; set; } = false;
-    public ICollection<Lawyer> Lawyers { get; set; } = [];
+    public virtual ICollection<Lawyer> Lawyers { get; set; } = [];
 }

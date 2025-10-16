@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ConnectLegal.DTOs;
 
-public class LawyerDto
+public class LawyerResponseDto
 {
     [Key]
     public Guid Id { get; set; }
@@ -31,7 +31,7 @@ public class LawyerDto
     [Range(0, 100, ErrorMessage = "Year of Experience must be between 0 and 100.")]
     public int YearOfExperience { get; set; } = 0;
     public Guid? LawFirmId { get; set; }
-    public LawFirmDto? LawFirm { get; set; }
+    public string? LawFirmName { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime? UpdatedAt { get; set; }
 }
@@ -91,5 +91,7 @@ public class UpdateLawyerDto
 
     [Range(0, 100, ErrorMessage = "Year of Experience must be between 0 and 100.")]
     public int YearOfExperience { get; set; } = 0;
+
+    public Guid? LawFirmId { get; set; }
     public DateTime? UpdatedAt { get; set; } = DateTime.Now;
 }

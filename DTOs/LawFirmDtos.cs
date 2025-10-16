@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ConnectLegal.DTOs;
 
-public class LawFirmDto
+public class LawFirmResponseDto
 {
     [Key]
     public Guid Id { get; set; }
@@ -81,7 +81,7 @@ public class UpdateLawFirmDto
     public DateTime? UpdatedAt { get; set; } = DateTime.Now;
 }
 
-public class LawFirmWithLawyersDto : LawFirmDto
+public class LawFirmWithLawyersDto : LawFirmResponseDto
 {
-    public ICollection<LawyerDto> Lawyers { get; set; } = [];
+    public ICollection<LawyerResponseDto> Lawyers { get; set; } = [];
 }
