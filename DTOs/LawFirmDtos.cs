@@ -81,7 +81,7 @@ public class UpdateLawFirmDto
     public DateTime? UpdatedAt { get; set; } = DateTime.Now;
 }
 
-public class LawFirmWithLawyersDto : LawFirmResponseDto
+public class LawFirmDetailDto : LawFirmResponseDto
 {
     public ICollection<LawyerResponseDto> Lawyers { get; set; } = [];
 }
