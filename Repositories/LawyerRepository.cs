@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ConnectLegal.Repositories;
 
-public class LawyerRepository(AppDbContext context) : Repository<Lawyer>(context), ILawyerRepository
+public class LawyerRepository(AppDbContext context) : BaseRepository<Lawyer>(context), ILawyerRepository
 {
     public async Task<Lawyer?> GetByEmailAsync(string email)
     {
-        return await _context.Lawyers.FirstOrDefaultAsync(l => l.Email == email);
+        return await _context.Lawyers.FirstOrDefaultAsync(l => l.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase));
     }
 
     public async Task<IEnumerable<Lawyer>?> GetFeaturedAsync()
@@ -17,13 +17,18 @@ public class LawyerRepository(AppDbContext context) : Repository<Lawyer>(context
         return await _context.Lawyers.Where(l => l.IsFeatured).ToListAsync();
     }
 
-    public async Task<IEnumerable<Lawyer>> GetLawyersByLawFirmIdAsync(Guid lawFirmId)
+    public async Task<Lawyer?> GetByIdWithLawFirmAsync(Guid id)
     {
-        return await _context.Lawyers.Where(l => l.LawFirmId == lawFirmId).ToListAsync();
+        return await _context.Lawyers
+            .Include(l => l.LawFirm)
+            .FirstOrDefaultAsync(l => l.Id == id);
     }
 
-    public async Task<bool> LawyerExistsAsync(Guid id)
+    public async Task<IEnumerable<Lawyer>?> GetLawyersByLawFirmAsync(Guid lawFirmId)
     {
-        return await _context.Lawyers.AnyAsync(l => l.Id == id);
+        return await _context.Lawyers
+            .Include(l => l.LawFirm)
+            .Where(l => l.LawFirmId == lawFirmId)
+            .ToListAsync();
     }
 }

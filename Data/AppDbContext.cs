@@ -37,7 +37,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasOne(l => l.LawFirm)
              .WithMany(f => f.Lawyers)
              .HasForeignKey(l => l.LawFirmId)
-             .OnDelete(DeleteBehavior.Cascade);
+             .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }
