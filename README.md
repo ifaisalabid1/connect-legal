@@ -24,7 +24,8 @@ A production-grade ASP.NET Core 9 Web API for managing Lawyers and Law Firms. Th
 2. Open the solution in Visual Studio / VS Code.
 3. Build the solution.
 4. Run the API using the provided launchSettings.json file or by setting the ASPNETCORE_ENVIRONMENT environment variable to "Development".
-5. Interact with the API using HTTP requests.
+5. Use your ConnectionString.
+6. Interact with the API using HTTP requests.
 
 **Contributing:**
 

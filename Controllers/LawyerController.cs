@@ -22,7 +22,7 @@ public class LawyerController(ILawyerService lawyerService) : ControllerBase
     {
         var lawyer = await _lawyerService.GetLawyerByIdAsync(id);
 
-        if (lawyer == null)
+        if (lawyer is null)
             return NotFound();
 
         return Ok(lawyer);

@@ -1,5 +1,4 @@
 using ConnectLegal.Data;
-using ConnectLegal.Entities;
 using ConnectLegal.Interfaces;
 using ConnectLegal.Mapping;
 using ConnectLegal.Repositories;
@@ -22,6 +21,13 @@ builder.Services.AddScoped<ILawyerRepository, LawyerRepository>();
 builder.Services.AddScoped<ILawFirmService, LawFirmService>();
 builder.Services.AddScoped<ILawyerService, LawyerService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", policy =>
+        {
+            policy.WithOrigins("http://localhost:5173");
+        });
+});
 
 builder.Services.AddOpenApi();
 
@@ -33,16 +39,18 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseExceptionHandler();
+
+app.UseHsts();
+
 app.UseHttpsRedirection();
+
+app.UseCors("AllowSpecificOrigin");
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
 app.MapControllers();
-
-// using (var scope = app.Services.CreateScope())
-// {
-//     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-//     context.Database.Migrate();
-// }
 
 app.Run();
