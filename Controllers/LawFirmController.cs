@@ -1,92 +1,84 @@
-using AutoMapper;
+using System.Reflection.Metadata.Ecma335;
 using ConnectLegal.DTOs;
-using ConnectLegal.Entities;
 using ConnectLegal.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConnectLegal.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
-public class LawFirmsController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<LawFirmsController> logger) : ControllerBase
+[Route("api/law-firms")]
+public class LawFirmController(ILawFirmService lawFirmService) : ControllerBase
 {
-    private readonly IUnitOfWork _unitOfWork = unitOfWork;
-    private readonly IMapper _mapper = mapper;
-    private readonly ILogger<LawFirmsController> _logger = logger;
-
+    private readonly ILawFirmService _lawFirmService = lawFirmService;
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<LawFirmDto>), 200)]
-    public async Task<IActionResult> GetLawFirms()
+    public async Task<ActionResult<IEnumerable<LawFirmResponseDto>>> GetLawFirms()
     {
-        var lawFirms = await _unitOfWork.LawFirms.GetAllAsync();
-        var lawFirmsDto = _mapper.Map<IEnumerable<LawFirmDto>>(lawFirms);
-        return Ok(lawFirmsDto);
+        var lawFirms = await _lawFirmService.GetAllLawFirmsAsync();
+        return Ok(lawFirms);
     }
 
+
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(LawyerDto), 200)]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> GetLawyer(Guid id)
+    public async Task<ActionResult<LawFirmResponseDto>> GetLawFirm(Guid id)
     {
-        var lawFirm = await _unitOfWork.LawFirms.GetByIdAsync(id);
-        if (lawFirm == null)
-        {
-            _logger.LogWarning("GetLawFirm({Id}) NOT FOUND", id);
+        var lawFirm = await _lawFirmService.GetLawFirmByIdAsync(id);
+
+        if (lawFirm is null)
             return NotFound();
-        }
-        var lawFirmDto = _mapper.Map<LawyerDto>(lawFirm);
-        return Ok(lawFirmDto);
+
+        return Ok(lawFirm);
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(LawFirmDto), 201)]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> PostLawFirm(CreateLawFirmDto createLawFirmDto)
+    public async Task<ActionResult<LawFirmResponseDto>> CreateLawFirm(CreateLawFirmDto createLawFirmDto)
     {
-        var lawFirm = _mapper.Map<LawFirm>(createLawFirmDto);
-        await _unitOfWork.LawFirms.AddAsync(lawFirm);
-        await _unitOfWork.CompleteAsync();
+        try
 
-        var lawFirmDto = _mapper.Map<LawFirmDto>(lawFirm);
-        return CreatedAtAction(nameof(GetLawFirms), new { id = lawFirmDto.Id }, lawFirmDto);
+        {
+            var createdLawFirm = await _lawFirmService.CreateLawFirmAsync(createLawFirmDto);
+            return CreatedAtAction(nameof(GetLawFirm), new { id = createdLawFirm.Id }, createdLawFirm);
+        }
+        catch (Exception ex)
+
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
-
 
     [HttpPut("{id}")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> PutLawFirm(Guid id, UpdateLawFirmDto updateLawFirmDto)
+    public async Task<IActionResult> UpdateLawFirm(Guid id, UpdateLawFirmDto updateLawFirmDto)
     {
-        var lawFirm = await _unitOfWork.LawFirms.GetByIdAsync(id);
-        if (lawFirm == null)
+        try
+        {
+            await _lawFirmService.UpdateLawFirmAsync(id, updateLawFirmDto);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
         {
             return NotFound();
         }
-
-        _mapper.Map(updateLawFirmDto, lawFirm);
-        _unitOfWork.LawFirms.UpdateAsync(lawFirm);
-        await _unitOfWork.CompleteAsync();
-
-        return NoContent();
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 
-
     [HttpDelete("{id}")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteLawFirm(Guid id)
     {
-        var lawFirm = await _unitOfWork.LawFirms.GetByIdAsync(id);
-        if (lawFirm == null)
+        try
+        {
+            await _lawFirmService.DeleteLawFirmAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
         {
             return NotFound();
         }
-
-        _unitOfWork.LawFirms.DeleteAsync(lawFirm);
-        await _unitOfWork.CompleteAsync();
-
-        return NoContent();
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 }

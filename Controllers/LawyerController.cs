@@ -1,93 +1,91 @@
-using AutoMapper;
 using ConnectLegal.DTOs;
-using ConnectLegal.Entities;
 using ConnectLegal.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConnectLegal.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
-public class LawyersController(IUnitOfWork unitOfWork, IMapper mapper, ILogger<LawyersController> logger) : ControllerBase
+[Route("api/lawyers")]
+public class LawyerController(ILawyerService lawyerService) : ControllerBase
 {
-    private readonly IUnitOfWork _unitOfWork = unitOfWork;
-    private readonly IMapper _mapper = mapper;
-    private readonly ILogger<LawyersController> _logger = logger;
-
+    private readonly ILawyerService _lawyerService = lawyerService;
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<LawyerDto>), 200)]
-    public async Task<IActionResult> GetLawyers()
+    public async Task<ActionResult<IEnumerable<LawyerResponseDto>>> GetLawyers()
     {
-        var lawyers = await _unitOfWork.Lawyers.GetAllAsync();
-        var lawyersDto = _mapper.Map<IEnumerable<LawyerDto>>(lawyers);
-        return Ok(lawyersDto);
+        var lawyers = await _lawyerService.GetAllLawyersAsync();
+        return Ok(lawyers);
     }
-
 
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(LawyerDto), 200)]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> GetLawyer(Guid id)
+    public async Task<ActionResult<LawyerResponseDto>> GetLawyer(Guid id)
     {
-        var lawyer = await _unitOfWork.Lawyers.GetByIdAsync(id);
+        var lawyer = await _lawyerService.GetLawyerByIdAsync(id);
+
         if (lawyer == null)
-        {
-            _logger.LogWarning("GetLawyer({Id}) NOT FOUND", id);
             return NotFound();
-        }
-        var lawyerDto = _mapper.Map<LawyerDto>(lawyer);
-        return Ok(lawyerDto);
+
+        return Ok(lawyer);
     }
 
+    [HttpGet("law-firm/{lawFirmId}")]
+    public async Task<ActionResult<IEnumerable<LawyerResponseDto>>> GetLawyersByLawFirm(Guid lawFirmId)
+    {
+        var lawyers = await _lawyerService.GetLawyersByLawFirmAsync(lawFirmId);
+        return Ok(lawyers);
+    }
 
     [HttpPost]
-    [ProducesResponseType(typeof(LawyerDto), 201)]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> PostLawyer(CreateLawyerDto createLawyerDto)
+    public async Task<ActionResult<LawyerResponseDto>> CreateLawyer(CreateLawyerDto createLawyerDto)
     {
-        var lawyer = _mapper.Map<Lawyer>(createLawyerDto);
-        await _unitOfWork.Lawyers.AddAsync(lawyer);
-        await _unitOfWork.CompleteAsync();
-
-        var lawyerDto = _mapper.Map<LawyerDto>(lawyer);
-        return CreatedAtAction(nameof(GetLawyer), new { id = lawyerDto.Id }, lawyerDto);
+        try
+        {
+            var createdLawyer = await _lawyerService.CreateLawyerAsync(createLawyerDto);
+            return CreatedAtAction(nameof(GetLawyer), new { id = createdLawyer.Id }, createdLawyer);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
-
 
     [HttpPut("{id}")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> PutLawyer(Guid id, UpdateLawyerDto updateLawyerDto)
+    public async Task<IActionResult> UpdateLawyer(Guid id, UpdateLawyerDto updateLawyerDto)
     {
-        var lawyer = await _unitOfWork.Lawyers.GetByIdAsync(id);
-        if (lawyer == null)
+        try
+        {
+            await _lawyerService.UpdateLawyerAsync(id, updateLawyerDto);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
         {
             return NotFound();
         }
-
-        _mapper.Map(updateLawyerDto, lawyer);
-        _unitOfWork.Lawyers.UpdateAsync(lawyer);
-        await _unitOfWork.CompleteAsync();
-
-        return NoContent();
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 
-
     [HttpDelete("{id}")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteLawyer(Guid id)
     {
-        var lawyer = await _unitOfWork.Lawyers.GetByIdAsync(id);
-        if (lawyer == null)
+        try
+        {
+            await _lawyerService.DeleteLawyerAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
         {
             return NotFound();
         }
-        _unitOfWork.Lawyers.DeleteAsync(lawyer);
-        await _unitOfWork.CompleteAsync();
-
-        return NoContent();
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
     }
 }
