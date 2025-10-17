@@ -13,7 +13,7 @@ public class Lawyer : BaseEntity
     [MaxLength(500, ErrorMessage = "Name must not be more than 500 characters long.")]
     public required string About { get; set; }
 
-    [Url(ErrorMessage = "Website must be a proper url."]
+    [Url(ErrorMessage = "Website must be a proper url.")]
     [MaxLength(255, ErrorMessage = "Name must not be more than 255 characters long.")]
     public string? Website { get; set; }
 

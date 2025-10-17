@@ -16,6 +16,6 @@ public class MappingProfile : Profile
 
         CreateMap<CreateLawyerDto, Lawyer>();
         CreateMap<UpdateLawyerDto, Lawyer>();
-        CreateMap<Lawyer, LawyerResponseDto>()
+        CreateMap<Lawyer, LawyerResponseDto>();
     }
 }

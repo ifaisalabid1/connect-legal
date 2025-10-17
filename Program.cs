@@ -1,24 +1,32 @@
 using ConnectLegal.Data;
+using ConnectLegal.Entities;
 using ConnectLegal.Interfaces;
-using ConnectLegal.Middleware;
+using ConnectLegal.Mapping;
+using ConnectLegal.Repositories;
+using ConnectLegal.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddControllers();
+builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
+
+builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+builder.Services.AddScoped<ILawFirmRepository, LawFirmRepository>();
+builder.Services.AddScoped<ILawyerRepository, LawyerRepository>();
+
+builder.Services.AddScoped<ILawFirmService, LawFirmService>();
+builder.Services.AddScoped<ILawyerService, LawyerService>();
+
 
 builder.Services.AddOpenApi();
 
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-
 var app = builder.Build();
 
-app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
@@ -33,17 +41,8 @@ app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<AppDbContext>();
-        await context.Database.MigrateAsync();
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while migrating the database.");
-    }
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    context.Database.Migrate();
 }
 
 app.Run();
