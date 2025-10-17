@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ConnectLegal.Repositories;
 
-public abstract class BaseRepository<T>(AppDbContext context) : IRepository<T> where T : class
+public class BaseRepository<T>(AppDbContext context) : IRepository<T> where T : class
 {
     protected readonly AppDbContext _context = context;
     protected readonly DbSet<T> _dbSet = context.Set<T>();

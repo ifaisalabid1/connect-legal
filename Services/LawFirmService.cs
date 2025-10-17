@@ -6,9 +6,9 @@ using ConnectLegal.Repositories;
 
 namespace ConnectLegal.Services;
 
-public class LawFirmService(LawFirmRepository lawFirmRepository, IMapper mapper) : ILawFirmService
+public class LawFirmService(ILawFirmRepository lawFirmRepository, IMapper mapper) : ILawFirmService
 {
-    private readonly LawFirmRepository _lawFirmRepository = lawFirmRepository;
+    private readonly ILawFirmRepository _lawFirmRepository = lawFirmRepository;
     private readonly IMapper _mapper = mapper;
 
     public async Task<LawFirmResponseDto> CreateLawFirmAsync(CreateLawFirmDto createLawFirmDto)

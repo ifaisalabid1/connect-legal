@@ -6,9 +6,9 @@ using ConnectLegal.Repositories;
 
 namespace ConnectLegal.Services;
 
-public class LawyerService(LawyerRepository lawyerRepository, IMapper mapper) : ILawyerService
+public class LawyerService(ILawyerRepository lawyerRepository, IMapper mapper) : ILawyerService
 {
-    private readonly LawyerRepository _lawyerRepository = lawyerRepository;
+    private readonly ILawyerRepository _lawyerRepository = lawyerRepository;
     private readonly IMapper _mapper = mapper;
 
     public async Task<LawyerResponseDto> CreateLawyerAsync(CreateLawyerDto createLawyerDto)
