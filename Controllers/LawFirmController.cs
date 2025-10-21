@@ -1,16 +1,19 @@
 using ConnectLegal.DTOs;
 using ConnectLegal.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConnectLegal.Controllers;
 
 [ApiController]
 [Route("api/law-firms")]
+[Authorize]
 public class LawFirmController(ILawFirmService lawFirmService) : ControllerBase
 {
     private readonly ILawFirmService _lawFirmService = lawFirmService;
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<LawFirmResponseDto>>> GetLawFirms()
     {
         var lawFirms = await _lawFirmService.GetAllLawFirmsAsync();
@@ -19,6 +22,7 @@ public class LawFirmController(ILawFirmService lawFirmService) : ControllerBase
 
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<ActionResult<LawFirmResponseDto>> GetLawFirm(Guid id)
     {
         var lawFirm = await _lawFirmService.GetLawFirmByIdAsync(id);
@@ -30,6 +34,7 @@ public class LawFirmController(ILawFirmService lawFirmService) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<LawFirmResponseDto>> CreateLawFirm(CreateLawFirmDto createLawFirmDto)
     {
         try
@@ -46,6 +51,7 @@ public class LawFirmController(ILawFirmService lawFirmService) : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateLawFirm(Guid id, UpdateLawFirmDto updateLawFirmDto)
     {
         try
@@ -64,6 +70,7 @@ public class LawFirmController(ILawFirmService lawFirmService) : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteLawFirm(Guid id)
     {
         try

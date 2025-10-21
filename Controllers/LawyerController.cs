@@ -1,16 +1,19 @@
 using ConnectLegal.DTOs;
 using ConnectLegal.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConnectLegal.Controllers;
 
 [ApiController]
 [Route("api/lawyers")]
+[Authorize]
 public class LawyerController(ILawyerService lawyerService) : ControllerBase
 {
     private readonly ILawyerService _lawyerService = lawyerService;
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<LawyerResponseDto>>> GetLawyers()
     {
         var lawyers = await _lawyerService.GetAllLawyersAsync();
@@ -18,6 +21,7 @@ public class LawyerController(ILawyerService lawyerService) : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<ActionResult<LawyerResponseDto>> GetLawyer(Guid id)
     {
         var lawyer = await _lawyerService.GetLawyerByIdAsync(id);
@@ -29,6 +33,7 @@ public class LawyerController(ILawyerService lawyerService) : ControllerBase
     }
 
     [HttpGet("law-firm/{lawFirmId}")]
+    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<LawyerResponseDto>>> GetLawyersByLawFirm(Guid lawFirmId)
     {
         var lawyers = await _lawyerService.GetLawyersByLawFirmAsync(lawFirmId);
@@ -36,6 +41,7 @@ public class LawyerController(ILawyerService lawyerService) : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin,Lawyer")]
     public async Task<ActionResult<LawyerResponseDto>> CreateLawyer(CreateLawyerDto createLawyerDto)
     {
         try
@@ -54,6 +60,7 @@ public class LawyerController(ILawyerService lawyerService) : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin,Lawyer")]
     public async Task<IActionResult> UpdateLawyer(Guid id, UpdateLawyerDto updateLawyerDto)
     {
         try
@@ -72,6 +79,7 @@ public class LawyerController(ILawyerService lawyerService) : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteLawyer(Guid id)
     {
         try
