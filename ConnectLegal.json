@@ -5,6 +5,165 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/api/Auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegisterDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegisterDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegisterDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Auth/profile": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Auth/change-password": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/law-firms": {
       "get": {
         "tags": [
@@ -431,6 +590,46 @@
   },
   "components": {
     "schemas": {
+      "AuthResponseDto": {
+        "required": [
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "expiration": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserProfileDto"
+          }
+        }
+      },
+      "ChangePasswordDto": {
+        "required": [
+          "currentPassword",
+          "newPassword",
+          "confirmNewPassword"
+        ],
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "maxLength": 255,
+            "type": "string"
+          },
+          "newPassword": {
+            "maxLength": 255,
+            "type": "string"
+          },
+          "confirmNewPassword": {
+            "maxLength": 255,
+            "type": "string"
+          }
+        }
+      },
       "CreateLawFirmDto": {
         "required": [
           "name",
@@ -721,10 +920,92 @@
             "nullable": true
           }
         }
+      },
+      "UserLoginDto": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "maxLength": 255,
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 255,
+            "type": "string"
+          }
+        }
+      },
+      "UserProfileDto": {
+        "required": [
+          "id",
+          "firstName",
+          "lastName",
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "firstName": {
+            "maxLength": 255,
+            "type": "string"
+          },
+          "lastName": {
+            "maxLength": 255,
+            "type": "string"
+          },
+          "email": {
+            "maxLength": 255,
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "UserRegisterDto": {
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "password",
+          "confirmPassword"
+        ],
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "maxLength": 255,
+            "type": "string"
+          },
+          "lastName": {
+            "maxLength": 255,
+            "type": "string"
+          },
+          "email": {
+            "maxLength": 255,
+            "type": "string"
+          },
+          "password": {
+            "maxLength": 255,
+            "type": "string"
+          },
+          "confirmPassword": {
+            "maxLength": 255,
+            "type": "string"
+          }
+        }
       }
     }
   },
   "tags": [
+    {
+      "name": "Auth"
+    },
     {
       "name": "LawFirm"
     },

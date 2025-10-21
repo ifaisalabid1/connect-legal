@@ -9,6 +9,11 @@ A production-grade ASP.NET Core 9 Web API for managing Lawyers and Law Firms. Th
 - **Service Layer** for business logic separation.
 - **Clean Architecture** following SOLID principles.
 - **Production-ready** error handling and validation.
+- **JWT-based** authentication.
+- **Role-based** authorization (Admin, Lawyer, User).
+- **User registration and login**.
+- **Password management**.
+- **Protected endpoints** with appropriate access levels.
 
 **Technologies:**
 
